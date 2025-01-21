@@ -1,16 +1,15 @@
 "use client"
 import React from 'react'
 import { useState } from 'react';
-import { AppBar, Toolbar,Typography,InputBase,Stack,Button,MenuItem,MenuList,Paper,Box } from '@mui/material';
+import { AppBar, Toolbar,Typography,InputBase,Stack,Button,MenuItem,MenuList,Paper,Box,IconButton,Badge } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import BookIcon from '@mui/icons-material/Book';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import CircleIcon from '@mui/icons-material/Circle';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ClearIcon from '@mui/icons-material/Clear';
-import { Link } from 'next/link';
+import Link from 'next/link';
 
 
 const Search=styled(("div"))({
@@ -23,80 +22,85 @@ const Search=styled(("div"))({
   borderRadius:"3px", 
 });
 
-const Icons=styled((Box))({
-  display:"flex",
-  alignItems:"center",
-  gap:"20px",
-  color:"white",
-  fontWeight:"bold",
-  cursor:"pointer",
-});
-
 const NavBar = () => {
   const isLoggedIn=true;
   const [menuOpen,setMenuOpen]=useState(false);
+  const [isFocused,setIsFocused]=useState(false);
+  const [searchValue,setSearchValue]=useState("");
 
   const handleMenu =()=>{
     setMenuOpen(prev=>!prev);
   }
+  const handleClearSearch=()=>{
+    setSearchValue("");
+  }
 
   return (
     <Box>
-        <AppBar position='sticky'>
-            <Toolbar sx={{color:"#121858",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-              <Stack component={Link} to="/" direction="row" alignItems="center" spacing={1} sx={{cursor:"pointer",textDecoration:"none"}}> 
-                  <BookIcon sx={{color:"white"}}/>
-                  <Typography
-                    variant="h6"
-                    component="div"
-                    sx={{color:"white",fontWeight:"bold"}}>
+        <AppBar position='fixed'>
+            <Toolbar sx={{backgroundColor:"#3f51b5",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+            <Link href="/">
+              <IconButton size="large" edge="start" color="inherit" aria-label="open drawer" sx={{cursor:"pointer",textDecoration:"none",color:"white"}}>
+                  <BookIcon sx={{fontSize:"20px"}} />
+                  <Typography variant="h6" component="div" sx={{marginLeft:"7px",fontWeight:"bold"}}>
                     Book Cart
-                    </Typography>
-              </Stack>
-                
-
-                <Search>
-                    <InputBase placeholder='Search books or authors' sx={{fontSize:"20px",color:"#212121",paddingX:"10px"}} 
+                  </Typography>        
+              </IconButton>
+            </Link>
+              
+              <Search>
+                    <InputBase placeholder='Search books or authors' sx={{fontSize:"20px",color:"#212121",paddingX:"10px",
+                       "& input::placeholder": {
+                        color: "#3c3c3c", 
+                        opacity:0.8,}}}
+                        value={searchValue}
+                        onChange={(e)=>setSearchValue(e.target.value)}
+                        onFocus={() => setIsFocused(true)}
                        />
-                    <ClearIcon sx={{position:"absolute",right:"10px",color:"blue"}} />
-                </Search>
-
-                <Icons>
-
-                  {isLoggedIn && (
-                      <Stack direction="row" position="relative" >
-                      <FavoriteIcon/>
-                      <CircleIcon sx={{color:"red",position:"absolute",top:"-10px",left:"10px",fontSize:"20px"}}/>
-                    </Stack>
-                  )}
+                       {isFocused && (
+                            <ClearIcon sx={{position:"absolute",right:"10px",color:"#001f6c",opacity:0.9,fontSize:"20px"}} 
+                            onClick={handleClearSearch}/>
+                       )}
                     
+              </Search>
+                
+          <Box sx={{display:"flex",alignItems:"center"}}>
+            {isLoggedIn && (
+            <IconButton size="large" aria-label="favorite" color="inherit">
+              <Badge badgeContent={1} color="error">
+              <FavoriteIcon/>
+              </Badge>
+            </IconButton>
+            )}
 
-                    <Stack  direction="row" position="relative">
-                      <ShoppingCartIcon />
-                      <CircleIcon sx={{color:"red",position:"absolute",top:"-10px",left:"10px",fontSize:"20px"}}/>
-                    </Stack>
+            <IconButton size="large" aria-label="shoppingcart" color="inherit">
+              <Badge badgeContent={1} color="error">
+              <ShoppingCartIcon/>
+              </Badge>
+            </IconButton>
 
-                    {isLoggedIn ? (
-                      <Stack direction="row" position="relative" onClick={handleMenu} >
-                      <AccountCircleIcon/>
-                      <ArrowDropDownIcon/>
-                          {menuOpen && (
-                            <Paper sx={{position:"absolute",top:"30px",right:0}}>
+            {isLoggedIn ? (
+            <IconButton size="large" edge="end" aria-label="account of current user"
+              aria-haspopup="true"
+              onClick={handleMenu}
+              color="inherit" >
+              <AccountCircleIcon/>
+              <ArrowDropDownIcon/>
+              {menuOpen && (
+                            <Paper sx={{position:"absolute",top:"40px",right:0,height:"110px"}}>
                             <MenuList>
-                              <MenuItem>My Orders</MenuItem>
+                             <MenuItem sx={{ paddingY: "10px", marginY: "4px" }}>My Orders</MenuItem>
                               <MenuItem>Logout</MenuItem>
                             </MenuList>
                             </Paper>
-                          )}   
-                      </Stack>
-                         
-                    ) : (
-                      <Stack direction="row" spacing={1}>
+                          )}  
+            </IconButton>
+              ) : (
+                <Stack direction="row" spacing={1}>
                       <Button sx={{color:"white",fontWeight:"bold",textTransform:"none"}}>Login</Button>
                     </Stack>
-                    ) }   
-                </Icons>
-
+                    ) }
+          </Box>
             </Toolbar>
         </AppBar>
     </Box>
