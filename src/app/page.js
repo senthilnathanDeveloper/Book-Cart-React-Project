@@ -1,11 +1,11 @@
-import Image from "next/image";
-import styles from "./page.module.css";
-import Header from "./components/Header";
+import React from 'react'
 
-export default function Home() {
+const page = () => {
   return (
-  <div>
-    <Header/>
-  </div>
-  );
+    <div>
+     
+    </div>
+  )
 }
+
+export default page
