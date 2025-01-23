@@ -136,7 +136,7 @@ const ProductList = () => {
         ))
       ) : (
         <Typography variant="h6" sx={{ textAlign: 'center', width: '100%' }}>
-          No products available.
+          Loading Products ....
         </Typography>
       )}
     </div>
