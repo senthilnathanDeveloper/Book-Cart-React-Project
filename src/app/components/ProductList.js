@@ -1,4 +1,4 @@
-'use client';
+// 'use client';
 
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -15,11 +15,12 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
 const ProductList = () => {
-  const dispatch = useDispatch(); // Uncommented
+  const dispatch = useDispatch();
   const books = useSelector((state) => state.cart.books);
+  const error = useSelector((state) => state.cart.error); // Get error from Redux state
+  const loading = useSelector((state) => state.cart.status === 'loading'); // Get loading status from Redux state
   const router = useRouter();
   const [favorites, setFavorites] = useState({});
-  const [error, setError] = useState(null);
 
   const handleFavorite = (id) => {
     setFavorites((prevFavorites) => ({
@@ -30,15 +31,10 @@ const ProductList = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        console.log("Dispatching fetchBooks action"); // Debug log
-        dispatch(fetchBooks());
-      } catch (err) {
-        setError('Failed to fetch products. Please try again later.');
-      }
+      dispatch(fetchBooks());
     };
     fetchData();
-  }, [dispatch]); // Added dispatch to dependency array
+  }, [dispatch]);
 
   const handleAddToCart = (book) => {
     dispatch(addToCart(book));
@@ -46,12 +42,16 @@ const ProductList = () => {
 
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }}>
-      {error && (
-        <Typography variant="h6" sx={{ color: 'red', textAlign: 'center', width: '100%' }}>
-          {error}
+      {loading && (
+        <Typography variant="h6" sx={{ textAlign: 'center', width: '100%' }}>
+          Loading products...
         </Typography>
       )}
-      {Array.isArray(books) && books.length > 0 ? ( // Corrected array check
+      {error ? (
+        <Typography variant="h6" sx={{ color: 'red', textAlign: 'center', width: '100%' }}>
+          Failed to fetch Products....Try after some time
+        </Typography>
+      ) : (
         books.map((book) => (
           <Card
             onClick={() => router.push(`/product/${book.bookId}`)}
@@ -134,10 +134,6 @@ const ProductList = () => {
             </CardActions>
           </Card>
         ))
-      ) : (
-        <Typography variant="h6" sx={{ textAlign: 'center', width: '100%' }}>
-          Loading Products ....
-        </Typography>
       )}
     </div>
   );
