@@ -15,6 +15,8 @@ import{
 } from '@mui/material'
 import { Visibility, VisibilityOff } from '@mui/icons-material'
 import * as yup from 'yup'
+import { useDispatch } from 'react-redux'
+import { loginUser } from '../features/userSlice'
 
 const validationSchema = yup.object({
   username: yup.string().required('Username is required'),
@@ -23,7 +25,7 @@ const validationSchema = yup.object({
 
 export default function Login({ onToggleForm }) {
   const [showPassword, setShowPassword] = useState(false)
-
+  const dispatch = useDispatch();
   const formik = useFormik({
     initialValues: {
       username: '',
@@ -32,6 +34,7 @@ export default function Login({ onToggleForm }) {
     validationSchema: validationSchema,
     onSubmit: (values) => {
       console.log(values)
+         dispatch(loginUser(values));
     },
   })
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useFormik } from 'formik'
 import {
   Box,
@@ -19,6 +19,8 @@ import {
 } from '@mui/material'
 import { Visibility, VisibilityOff } from '@mui/icons-material'
 import * as yup from 'yup'
+import { useDispatch, useSelector } from 'react-redux'
+import { registerUser, resetState, validateUserName } from '../features/userSlice'
 
 
 const validationSchema = yup.object({
@@ -39,6 +41,8 @@ const validationSchema = yup.object({
 export default function Register({ onToggleForm }) {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const dispatch = useDispatch()
+  const { loading, error, success, isUsernameValid } = useSelector((state) => state.user);
 
   const formik = useFormik({
     initialValues: {
@@ -50,10 +54,28 @@ export default function Register({ onToggleForm }) {
       gender: '',
     },
     validationSchema: validationSchema,
-    onSubmit: (values) => {
+    onSubmit:async (values) => {
       console.log(values)
+     // Validate username first
+     const validateResult = await dispatch(validateUserName(values.username));
+
+     if (validateUserName.fulfilled.match(validateResult) && validateResult.payload) {
+       // If username is valid, proceed with registration
+       dispatch(registerUser(values));
+     } else {
+       // If username is invalid, show an error
+       alert('Username is already taken. Please choose another.');
+     }
     },
   })
+  
+  useEffect(() => {
+    if (success) {
+      alert('Registration successful!');
+      dispatch(resetState());
+      formik.resetForm();
+    }
+  }, [success, dispatch, formik]);
 
   return (
     <Paper

@@ -6,6 +6,8 @@ import Login from "./components/Login/Login";
 import { Box } from "@mui/material";
 import { useState } from "react";
 import Register from "./components/Register/Register";
+import { Provider } from "react-redux";
+import store from "./store";
 
 export default function Home() {
   const [isLogin, setIsLogin] = useState(true)
@@ -13,6 +15,7 @@ export default function Home() {
   const togglerForm = () => setIsLogin(!isLogin)
   return (
     <div>
+          <Provider store={store}>
       <Box style={{ minHeight: '100', bgColor: '#f5f5f5', py: 4 }}>
         {isLogin ? (
           <>
@@ -22,7 +25,7 @@ export default function Home() {
           <Register onToggleForm={togglerForm} />
         )}
       </Box>
-
+      </Provider>
     </div>
   );
 }
