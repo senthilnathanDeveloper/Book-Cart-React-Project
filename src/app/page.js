@@ -1,11 +1,20 @@
-import React from 'react'
+// src/app/page.js
+'use client';
+import Image from 'next/image';
 
-const page = () => {
+import Header from './components/Header';
+import ProductList from './components/ProductList';
+import { Provider } from 'react-redux';
+import store from '@/redux/store';
+
+export default function Home() {
   return (
-    <div>
-     
-    </div>
-  )
+<>
+    <Provider store={store}>
+      <Header />
+      <ProductList />
+ 
+    </Provider>
+</>
+  );
 }
-
-export default page
